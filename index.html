@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Piccy — Instant image metadata viewer. See EXIF data from any iPhone, Android, or camera photo. 100% private, runs locally in your browser." />
+  <meta name="theme-color" content="#0d0d0f" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Piccy — Image Metadata Viewer" />
+  <meta property="og:description" content="Instantly view EXIF metadata from any photo. Privacy-first, runs in your browser." />
+  <meta property="og:type" content="website" />
+
+  <title>Piccy — Image Metadata Viewer</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Favicon (inline SVG) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230d0d0f'/><text x='16' y='22' text-anchor='middle' font-size='18'>📷</text></svg>" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════
+       HEADER
+  ══════════════════════════════════ -->
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo">Pic<span>cy</span></div>
+        <div class="tagline">Image Metadata Viewer</div>
+        <div class="privacy-badge">Local — No Upload</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════ -->
+  <main>
+    <div class="container">
+
+      <!-- Error message -->
+      <div id="error-msg" role="alert"></div>
+
+      <!-- ── Upload Zone ── -->
+      <div id="upload-zone" class="upload-zone" role="button" tabindex="0"
+           aria-label="Upload an image to view its metadata"
+           onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+
+        <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.webp,.heic,.heif,.tiff,.bmp,image/*" />
+
+        <div class="upload-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+
+        <div class="upload-title">Drop your image here</div>
+        <div class="upload-sub">or click to browse — works with iPhone, Android &amp; camera photos</div>
+
+        <div class="format-tags" aria-label="Supported formats">
+          <span class="format-tag">JPG</span>
+          <span class="format-tag">JPEG</span>
+          <span class="format-tag">PNG</span>
+          <span class="format-tag">WebP</span>
+          <span class="format-tag">HEIC</span>
+          <span class="format-tag">HEIF</span>
+        </div>
+      </div>
+
+      <!-- ── Loading State ── -->
+      <div id="loading" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="loading-text">Parsing metadata…</p>
+      </div>
+
+      <!-- ── Results ── -->
+      <div id="results">
+        <div class="results-grid">
+
+          <!-- Left: Preview -->
+          <div class="preview-panel">
+            <div class="preview-card">
+              <div class="preview-image-wrap">
+                <img id="preview-img" src="" alt="Uploaded image preview" />
+              </div>
+              <div class="preview-meta">
+                <div id="preview-name" class="preview-filename"></div>
+                <div id="preview-size" class="preview-filesize"></div>
+              </div>
+              <div class="action-row">
+                <button id="btn-copy" class="btn" title="Copy all metadata to clipboard">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                  Copy
+                </button>
+                <button id="btn-download" class="btn btn-primary" title="Download metadata as JSON">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  JSON
+                </button>
+              </div>
+            </div>
+
+            <div class="new-upload-wrap">
+              <button id="btn-new-upload" class="btn btn-new-upload">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.08"/>
+                </svg>
+                New Image
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Metadata -->
+          <div id="metadata-panel" class="metadata-panel">
+            <!-- Sections injected by ui.js -->
+          </div>
+
+        </div>
+      </div>
+      <!-- /results -->
+
+    </div>
+  </main>
+
+  <!-- ══════════════════════════════════
+       FOOTER
+  ══════════════════════════════════ -->
+  <footer>
+    <div class="container">
+      <p class="footer-text">
+        <strong>Piccy</strong> — All processing happens locally. Your images never leave your device.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════
+       SCRIPTS
+       Load exifr from CDN, heic2any optionally
+  ══════════════════════════════════ -->
+
+  <!-- exifr: Full EXIF parser with GPS support -->
+  <script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.cjs" crossorigin="anonymous"></script>
+
+  <!-- heic2any: HEIC/HEIF to JPEG converter -->
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js" crossorigin="anonymous"
+          onerror="console.warn('[Piccy] heic2any failed to load — HEIC preview disabled')"></script>
+
+  <!-- App modules -->
+  <script src="metadata.js"></script>
+  <script src="ui.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
